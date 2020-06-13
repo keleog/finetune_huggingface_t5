@@ -1,0 +1,30 @@
+model:
+  tokenizer_path: "bpe/bpe4000.model" # optional path to your trained tokenizer, will default to model size tokenizer
+  model_size: "t5-small"
+
+training:
+  epochs: 
+  batch_size: 16
+  beam_size: 1
+  max_output_length: 300
+  optimizer: adam # sgd
+  learning_rate: 0.0003
+  weight_decay: 0.0
+  reduce_lr_on_bleu_plateau: True
+  patience: 3
+  reduction_factor: 0.1
+  min_lr: 0.00000001
+  num_workers_data_gen: 16
+  shuffle_data: True
+  early_stopping: False
+  evaluate_dev: True
+  use_cuda: True
+
+data:
+  src_lang: en
+  tgt_lang: pd
+  src_train: data/train_data/train.en
+  src_dev: data/train_data/dev.en
+  tgt_train: data/train_data/train.pcm
+  tgt_dev: data/train_data/dev.pcm
+  src_prefix: translate English to Pidgin
