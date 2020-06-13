@@ -3,7 +3,7 @@ model:
   model_size: "t5-small"
 
 training:
-  epochs: 
+  epochs: 50
   batch_size: 16
   beam_size: 1
   max_output_length: 300

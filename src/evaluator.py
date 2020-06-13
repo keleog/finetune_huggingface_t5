@@ -35,7 +35,6 @@ class Evaluator:
         src_test_path: str,
         tgt_test_path: str,
         save_as_pretrained: bool = False,
-        use_cuda: bool = True,
     ):
 
         self._check_inputs(experiment_path)

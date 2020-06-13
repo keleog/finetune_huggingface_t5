@@ -10,18 +10,13 @@ flags.DEFINE_string(
 flags.DEFINE_string("src_test_path", None, "Path to source language test sentences")
 flags.DEFINE_string("tgt_test_path", None, "Path to target language test sentences")
 flags.DEFINE_boolean("save_as_pretrained", False, "If True, save the loaded model as pretrained")
-flags.DEFINE_boolean("use_cuda", True, "Whether or not to use GPU")
 
 
 def main(argv):
 
     # initialize evaluator and evaluate
     evaluator = Evaluator(
-        FLAGS.experiment_path,
-        FLAGS.src_test_path,
-        FLAGS.tgt_test_path,
-        FLAGS.save_as_pretrained,
-        FLAGS.use_cuda,
+        FLAGS.experiment_path, FLAGS.src_test_path, FLAGS.tgt_test_path, FLAGS.save_as_pretrained,
     )
     evaluator.evaluate()
 
