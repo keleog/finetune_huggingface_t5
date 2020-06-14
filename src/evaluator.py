@@ -46,7 +46,7 @@ class Evaluator:
         self.experiment_path = experiment_path
 
         if self.model_config["tokenizer_path"]:
-            self.tokenizer = T5Tokenizer.from_pretrained()
+            self.tokenizer = T5Tokenizer.from_pretrained(self.model_config["tokenizer_path"])
         else:
             logging.warning(
                 f"No tokenizer path inputed, using {self.model_config['model_size']} default pretrained tokenizer"
