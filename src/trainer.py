@@ -43,7 +43,6 @@ class Trainer:
             )
             self.tokenizer = T5Tokenizer.from_pretrained(self.model_config["model_size"])
 
-        self.tokenizer = T5Tokenizer.from_pretrained()
         self.device = torch.device(
             "cuda" if self.train_config["use_cuda"] and torch.cuda.is_available() else "cpu"
         )
