@@ -1,6 +1,7 @@
 import os
 from typing import Generator
 from typing import Iterator
+from typing import Optional
 
 import torch
 from dataset import MonoDataset
@@ -158,8 +159,8 @@ class Trainer:
 
     def train(self) -> None:
         """
-        Train model on parallel dataset, evaluate dev data and save best model according to bleu if
-        specified.
+        Train model on parallel dataset, evaluate dev data and save best model according to bleu  or
+        loss.
         """
         self.logger.info("Building model...")
         self._build_model()
@@ -179,6 +180,7 @@ class Trainer:
 
         self.logger.info("Starting training...")
         best_bleu = 0.0
+        best_loss = float("inf")
         for epoch in range(self.train_config["epochs"]):
             total_epoch_loss = 0.0
             running_loss = 0.0
@@ -214,15 +216,26 @@ class Trainer:
                     best_bleu = bleu_score
                 else:
                     self.logger.info(
-                        f"New BLEU not better than best BLEU - {best_bleu:.2f}, model not saved"
+                        f"New BLEU: {bleu_score:.2f} not better than best BLEU: {best_bleu:.2f}, model not saved"
                     )
                 self.model.train()
+
+            else:
+                # save model by loss
+                if loss.item() < best_loss:
+                    self._save_model(optimizer, epoch, loss.item())
+                    best_loss = loss.item()
+                    self.logger.info(f"New best loss: {best_loss:.2f}, model saved!")
+                else:
+                    self.logger.info(
+                        f"New loss: {loss.item():.2f} not lower than best loss - {best_loss:.2f}, model not saved"
+                    )
 
             if self.train_config["reduce_lr_on_bleu_plateau"]:
                 scheduler.step(bleu_score)
 
         self.logger.info(
-            f"Training done! All outputs saved in {self.experiment_path}. Best BLEU score was {best_bleu}"
+            f"Training done! All outputs saved in {self.experiment_path}. Best BLEU score was {best_bleu:.2f}"
         )
 
     def _evaluate_dev(
@@ -259,7 +272,11 @@ class Trainer:
         return bleu_score
 
     def _save_model(
-        self, optimizer: torch.optim.Optimizer, epoch: int, loss: float, best_bleu: float
+        self,
+        optimizer: torch.optim.Optimizer,
+        epoch: int,
+        loss: float,
+        best_bleu: Optional[float] = None,
     ) -> None:
         """
         Save model.
